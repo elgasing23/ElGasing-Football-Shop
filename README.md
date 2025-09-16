@@ -1,6 +1,6 @@
 # TUGAS INDIVIDU
-Nama: M Naufal Zhafran Rabiul Batara
-NPM: 2406361694
+Nama: M Naufal Zhafran Rabiul Batara\n
+NPM: 2406361694\n
 Kelas: F
 
 <details>
