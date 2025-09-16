@@ -33,6 +33,10 @@ PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", 'm-naufal41-elgasingshop.pbp.cs.ui.ac.id', ]
+    
+CSRF_TRUSTED_ORIGINS = [
+    'https://m-naufal41-elgasingshop.pbp.cs.ui.ac.id'
+]
 
 
 # Application definition
@@ -62,7 +66,7 @@ ROOT_URLCONF = 'football_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
