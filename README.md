@@ -1,6 +1,13 @@
-# Tugas 2 PBP
+# TUGAS INDIVIDU
+Nama: M Naufal Zhafran Rabiul Batara
+NPM: 2406361694
+Kelas: F
 
-Link: https://m-naufal41-elgasingshop.pbp.cs.ui.ac.id/
+<details>
+   <summary>
+      Tugas 2
+   </summary>
+   Link: https://m-naufal41-elgasingshop.pbp.cs.ui.ac.id/
 
 1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
    - Membuat sebuah proyek Django baru.
@@ -50,3 +57,65 @@ source: https://www.dothedev.com/blog/what-is-django-used-for/
 
 
    
+
+
+   
+</details>
+
+
+<details>
+   <summary>Tugas 3: Implementasi Form dan Data Delivery pada Django</summary>
+
+
+1. Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Data delivery dibutuhkan agar data dari server dapat diakses oleh client atau aplikasi lain dalam format yang terstandarisasi. hal ini memungkinkan aplikasi untuk:
+- Melakukan integrasi dengan sistem lain.
+- Mengirim dan menerima data secara real-time.
+- Memisahkan logika backend dan frontend, sehingga frontend bisa mengambil data tanpa harus terikat dengan template HTML.
+
+2. Mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+- XML cocok untuk data yang memiliki struktur kompleks dan membutuhkan validasi ketat.  
+- sedangkan JSON Lebih ringkas, mudah dibaca manusia maupun mesin, lebih cepat diparsing, dan sudah menjadi standar dalam komunikasi API modern.  
+JSON lebih populer karena lebih efisien, simpel, dan didukung luas di berbagai bahasa pemrograman.
+
+3. Fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkannya?
+Method is_valid() digunakan untuk:
+- Mengecek apakah data yang dikirim user melalui form sesuai dengan aturan yang didefinisikan di model atau form.
+- Menghindari error ketika data disimpan ke database.
+kita membutuhkan is_valid() karena tanpa is_valid(), data yang tidak sesuai bisa masuk ke database dan menimbulkan inkonsistensi.
+
+4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkannya?
+- csrf_token digunakan untuk mencegah CSRF (Cross-Site Request Forgery), yaitu serangan di mana penyerang mencoba mengirim permintaan palsu ke server dengan identitas user yang sedang login.
+- Jika csrf_token tidak ditambahkan, form Django akan ditolak secara default (Forbidden 403).
+- Tanpa proteksi ini, penyerang bisa mengeksploitasi user yang sedang login untuk melakukan aksi berbahaya, misalnya menghapus data atau melakukan transaksi tanpa izin.
+
+5. Bagaimana cara mengimplementasikan checklist tugas ini secara step-by-step?
+1. Membuat 4 fungsi views untuk menampilkan data dalam format XML, JSON, XML by ID, dan JSON by ID.  
+2. Menambahkan routing URL di urls.py untuk masing-masing view.
+3. membuat base.html (direktori templates pada root) yang berfungsi sebagai template dasar yang dapat digunakan sebagai kerangka umum untuk halaman web lainnya
+4. menambahkan base.html tadi ke list TEMPLATES di settings.py
+5. edit main.html pada dir main/templates agar menggunakan template utama
+6. membuat forms.py
+7. menambahkan function create_items & show_items pada views.py dan membuat list item pada fuction show_main
+8. import function yang telah dibuat ke urls.py
+9. membuat tampilan baru untuk main.html (buat button add items dan juga menampilkan daftar berita dan juga button detail).
+10. Membuat create_items & items_detail (.html) untuk halaman ketika button additems di klik dan juga button detail.
+
+6. Feedback untuk Asdos di Tutorial 2
+amann
+
+Dokumentasi Postman
+Berikut hasil akses endpoint menggunakan Postman:
+
+<img width="1470" height="919" alt="Screenshot 2025-09-17 at 03 56 59" src="https://github.com/user-attachments/assets/91fb4f94-561c-4d44-afdd-0fea11b29762" />
+<img width="1470" height="919" alt="Screenshot 2025-09-17 at 03 57 03" src="https://github.com/user-attachments/assets/a459f6f8-f10b-4d1c-8280-61aa4b06577e" />
+<img width="1470" height="919" alt="Screenshot 2025-09-17 at 03 57 06" src="https://github.com/user-attachments/assets/bc1b547b-b007-408e-b20f-08da01317b82" />
+<img width="1470" height="919" alt="Screenshot 2025-09-17 at 03 57 08" src="https://github.com/user-attachments/assets/06f1fc9e-58a3-4a28-a377-cb3845220bb6" />
+
+
+
+
+</details>
+
+
+
