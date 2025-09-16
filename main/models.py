@@ -18,6 +18,15 @@ class Item(models.Model):
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='other')
     is_featured = models.BooleanField(default=False)  
     created_at = models.DateTimeField(auto_now_add=True)
+    items_views = models.PositiveBigIntegerField(default=0)
 
     def __str__(self):
         return f"{self.name} - Rp{self.price:,}"
+    
+    @property
+    def is_items_hot(self):
+        return self.items_views > 20
+        
+    def increment_views(self):
+        self.items_views += 1
+        self.save()
