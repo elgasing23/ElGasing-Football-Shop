@@ -5,6 +5,8 @@ NPM: 2406361694
 
 Kelas: F
 
+Link PWS: https://m-naufal41-elgasingshop.pbp.cs.ui.ac.id/
+
 
 
 
