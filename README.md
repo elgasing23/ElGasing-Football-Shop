@@ -95,7 +95,7 @@ kita membutuhkan is_valid() karena tanpa is_valid(), data yang tidak sesuai bisa
 - Tanpa proteksi ini, penyerang bisa mengeksploitasi user yang sedang login untuk melakukan aksi berbahaya, misalnya menghapus data atau melakukan transaksi tanpa izin.
 
 5. Bagaimana cara mengimplementasikan checklist tugas ini secara step-by-step?
-   1. Membuat 4 fungsi views untuk menampilkan data dalam format XML, JSON, XML by ID, dan JSON by ID.  
+   1. Membuat 4 fuction baru di views dengan menggunakan Httpresponse dan seriaizers untuk menampilkan data dalam format XML, JSON, XML by ID, dan JSON by ID.
    2. Menambahkan routing URL di urls.py untuk masing-masing view.
    3. membuat base.html (direktori templates pada root) yang berfungsi sebagai template dasar yang dapat digunakan sebagai kerangka umum untuk halaman web lainnya
    4. menambahkan base.html tadi ke list TEMPLATES di settings.py
