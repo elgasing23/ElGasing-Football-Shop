@@ -5,6 +5,9 @@ NPM: 2406361694
 
 Kelas: F
 
+
+
+
 <details>
    <summary>
       Tugas 2
@@ -92,16 +95,16 @@ kita membutuhkan is_valid() karena tanpa is_valid(), data yang tidak sesuai bisa
 - Tanpa proteksi ini, penyerang bisa mengeksploitasi user yang sedang login untuk melakukan aksi berbahaya, misalnya menghapus data atau melakukan transaksi tanpa izin.
 
 5. Bagaimana cara mengimplementasikan checklist tugas ini secara step-by-step?
-1. Membuat 4 fungsi views untuk menampilkan data dalam format XML, JSON, XML by ID, dan JSON by ID.  
-2. Menambahkan routing URL di urls.py untuk masing-masing view.
-3. membuat base.html (direktori templates pada root) yang berfungsi sebagai template dasar yang dapat digunakan sebagai kerangka umum untuk halaman web lainnya
-4. menambahkan base.html tadi ke list TEMPLATES di settings.py
-5. edit main.html pada dir main/templates agar menggunakan template utama
-6. membuat forms.py
-7. menambahkan function create_items & show_items pada views.py dan membuat list item pada fuction show_main
-8. import function yang telah dibuat ke urls.py
-9. membuat tampilan baru untuk main.html (buat button add items dan juga menampilkan daftar berita dan juga button detail).
-10. Membuat create_items & items_detail (.html) untuk halaman ketika button additems di klik dan juga button detail.
+   1. Membuat 4 fungsi views untuk menampilkan data dalam format XML, JSON, XML by ID, dan JSON by ID.  
+   2. Menambahkan routing URL di urls.py untuk masing-masing view.
+   3. membuat base.html (direktori templates pada root) yang berfungsi sebagai template dasar yang dapat digunakan sebagai kerangka umum untuk halaman web lainnya
+   4. menambahkan base.html tadi ke list TEMPLATES di settings.py
+   5. edit main.html pada dir main/templates agar menggunakan template utama
+   6. membuat forms.py
+   7. menambahkan function create_items & show_items pada views.py dan membuat list item pada fuction show_main
+   8. import function yang telah dibuat ke urls.py
+   9. membuat tampilan baru untuk main.html (buat button add items dan juga menampilkan daftar berita dan juga button detail).
+   10. Membuat create_items & items_detail (.html) untuk halaman ketika button additems di klik dan juga button detail.
 
 6. Feedback untuk Asdos di Tutorial 2
 amann
