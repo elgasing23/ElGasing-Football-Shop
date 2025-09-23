@@ -180,7 +180,7 @@ Berikut hasil akses endpoint menggunakan Postman:
 </details>
 
 <details>
-  <summary>2. Membuat **dua (2)** akun pengguna dengan masing-masing **tiga (3)** dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal.</summary>
+  <summary>2. Membuat dua (2) akun pengguna dengan masing-masing tiga (3) dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal.</summary>
   1. elgasing
      - Jersey
      - El gasing de la Goat
@@ -194,7 +194,7 @@ Berikut hasil akses endpoint menggunakan Postman:
 </details>
 
 <details>
-  <summary>3. Menghubungkan model **Product** dengan **User**</summary>
+  <summary>3. Menghubungkan model Product dengan User</summary>
   1. import user di models.py dengan menambahkan line command "from django.contrib.auth.models import User"
   2. define user sebagai "user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)" ini berfungsi untuk menghubungkan satu items dengan satu user melalui sebuah relationship
   3. buat migrasi model lalu migrasi
@@ -221,7 +221,7 @@ Parameter commit=False pada potongan kode di atas digunakan agar Django tidak la
 </details>
 
 <details>
-  <summary>4. Menampilkan detail informasi pengguna yang sedang logged in seperti **username** dan menerapkan cookies seperti **last_login** pada halaman utama aplikasi.</summary>
+  <summary>4. Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last_login pada halaman utama aplikasi.</summary>
   1. mengubah bagian kode di fungsi login_user untuk menyimpan cookie baru bernama last_login yang berisi timestamp terakhir kali pengguna melakukan login.
   2. menambah lastlogin pada context variable di show_main
   3. mengubah fungsi logout agar menghapus cookie setelah logout
