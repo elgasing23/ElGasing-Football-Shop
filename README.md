@@ -169,18 +169,6 @@ Berikut hasil akses endpoint menggunakan Postman:
     - `SESSION_COOKIE_AGE` → atur waktu kadaluarsa.
 </details>
 
-<details>
-  <summary>5. Implementasi Checklist Step-by-Step</summary>
-  
-  1. Buat aplikasi Django dan aktifkan `django.contrib.auth`.  
-  2. Implementasikan form registrasi & login (pakai `UserCreationForm` dan `AuthenticationForm`).  
-  3. Tambahkan fungsi logout dengan `logout(request)`.  
-  4. Buat 2 user, masing-masing isi 3 dummy data di model Product.  
-  5. Tambahkan relasi `ForeignKey(User, on_delete=models.CASCADE)` pada model Product.  
-  6. Tampilkan `request.user.username` dan `last_login` di halaman utama.  
-  7. Jawab pertanyaan di atas dalam README dengan format dropdown.
-</details>
-
 ## Implementasi Checklist Step by Step
 
 <details>
