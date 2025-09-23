@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <title>
   {{nama_project}}
 </title>
@@ -9,3 +12,54 @@
 <h1>
   dibuat oleh {{ name }} - {{ npm }} dari kelas {{ class }}
 </h1>
+
+<a href="{% url 'main:create_items' %}">
+  <button>+ Add Items</button>
+</a>
+
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+<hr>
+
+<a href="?filter=all">
+    <button type="button">All Items</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Items</button>
+</a>
+
+{% if not item_list %}
+<p>Belum ada data item pada Elgasing Footballshop.</p>
+{% else %}
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+  {% for item in item_list %}
+  <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; background: #fafafa;">
+    <h2><a href="{% url 'main:show_items' item.id %}">{{ item.name }}</a></h2>
+
+    <p><b>{{ item.get_category_display }}</b>{% if item.is_featured %} | 
+      <b>Featured</b>{% endif %}{% if item.is_items_hot %} | 
+      <b>Hot</b>{% endif %} | <i>{{ item.created_at|date:"d M Y H:i" }}</i> 
+      | Views: {{ item.items_views }}</p>
+
+    {% if item.thumbnail %}
+    <img src="{{ item.thumbnail }}" alt="thumbnail" width="100%" height="150" style="object-fit: cover; border-radius: 8px;">
+    <br />
+    {% endif %}
+
+    <p>{{ item.description|truncatewords:25 }}...</p>
+
+    <p><a href="{% url 'main:show_items' item.id %}"><button>Read More</button></a></p>
+  </div>
+  {% endfor %}
+</div> 
+
+{% comment %}  bang ini html cssnya pake gpt {% endcomment %}
+
+{% endif %}
+
+{% endblock content %}
