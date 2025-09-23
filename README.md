@@ -124,5 +124,125 @@ Berikut hasil akses endpoint menggunakan Postman:
 
 </details>
 
+<details>
+   <summary>
+      Tugas 4: Implementasi Autentikasi, Session, dan Cookies pada Django
+   </summary>
+
+## Pertanyaan di README
+
+<details>
+  <summary>1. Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.</summary>
+  
+  **AuthenticationForm** adalah form bawaan Django untuk proses login.  
+  - **Kelebihan**: Mudah digunakan, langsung terintegrasi dengan sistem autentikasi Django.  
+  - **Kekurangan**: Kurang fleksibel jika butuh customisasi form login yang kompleks.
+</details>
+
+<details>
+  <summary>2. Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?</summary>
+  
+  - **Autentikasi**: Proses memverifikasi identitas pengguna (misalnya login dengan username & password).  
+  - **Otorisasi**: Proses menentukan hak akses pengguna setelah berhasil diautentikasi.  
+  Django menggunakan `django.contrib.auth` untuk autentikasi dan `permissions`/`groups` untuk otorisasi.
+</details>
+
+<details>
+  <summary>3. Kelebihan & Kekurangan Session dan Cookies</summary>
+  
+  - **Session**  
+    - **Kelebihan**: Data tersimpan di server → lebih aman.  
+    - **Kekurangan**: Membutuhkan manajemen penyimpanan di server.  
+  - **Cookies**  
+    - **Kelebihan**: Ringan, langsung tersimpan di browser.  
+    - **Kekurangan**: Rentan dimanipulasi/diintip jika tidak dienkripsi.
+</details>
+
+<details>
+  <summary>4. Apakah penggunaan Cookies aman secara default?</summary>
+  
+  - **Cookies** tidak selalu aman secara default.  
+  - Potensi risiko: *session hijacking*, *cross-site scripting (XSS)*.  
+  - **Django** menyediakan mitigasi:  
+    - `HttpOnly=True` → mencegah akses JavaScript.  
+    - `Secure=True` → hanya dikirim lewat HTTPS.  
+    - `SESSION_COOKIE_AGE` → atur waktu kadaluarsa.
+</details>
+
+<details>
+  <summary>5. Implementasi Checklist Step-by-Step</summary>
+  
+  1. Buat aplikasi Django dan aktifkan `django.contrib.auth`.  
+  2. Implementasikan form registrasi & login (pakai `UserCreationForm` dan `AuthenticationForm`).  
+  3. Tambahkan fungsi logout dengan `logout(request)`.  
+  4. Buat 2 user, masing-masing isi 3 dummy data di model Product.  
+  5. Tambahkan relasi `ForeignKey(User, on_delete=models.CASCADE)` pada model Product.  
+  6. Tampilkan `request.user.username` dan `last_login` di halaman utama.  
+  7. Jawab pertanyaan di atas dalam README dengan format dropdown.
+</details>
+
+## Implementasi Checklist Step by Step
+
+<details>
+  <summary>1. Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna mengakses aplikasi sesuai dengan status login/log out-nya.</summary>
+  1. membuat function regist, login ,logout
+  2. membuat tampilan page untuk registrasi, login. untuk logout cuman ditambahkan button pada main.html
+  3. Merestriksi Akses Halaman Main dan item Detail dengan menggunakan @loginrequired
+  4. menambahkan info last login
+</details>
+
+<details>
+  <summary>2. Membuat **dua (2)** akun pengguna dengan masing-masing **tiga (3)** dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal.</summary>
+  1. elgasing
+     - Jersey
+     - El gasing de la Goat
+     - onananananna
+    
+  2. decul
+     - Jersey
+     - Barca
+     - Bangku
+     
+</details>
+
+<details>
+  <summary>3. Menghubungkan model **Product** dengan **User**</summary>
+  1. import user di models.py dengan menambahkan line command "from django.contrib.auth.models import User"
+  2. define user sebagai "user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)" ini berfungsi untuk menghubungkan satu items dengan satu user melalui sebuah relationship
+  3. buat migrasi model lalu migrasi
+  4. edit views.py di bagian create_items
+   
+@login_required(login_url='/login')
+def create_items(request):
+    form = ItemForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form_entry = form.save(commit = False)
+        form_entry.user = request.user
+        form_entry.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_items.html", context)
+
+Parameter commit=False pada potongan kode di atas digunakan agar Django tidak langsung menyimpan objek hasil form ke database. Dengan begitu, kita memiliki kesempatan untuk memodifikasi objek tersebut terlebih dahulu sebelum disimpan.
+
+  5. membuat filter type di show main untuk tampilan default kita set ke all (semua barang yang dijual oleh semua user)
+  6. menambahkan tombol all and my items di main_html
+  7. menambah info seller di item detail
+</details>
+
+<details>
+  <summary>4. Menampilkan detail informasi pengguna yang sedang logged in seperti **username** dan menerapkan cookies seperti **last_login** pada halaman utama aplikasi.</summary>
+  1. mengubah bagian kode di fungsi login_user untuk menyimpan cookie baru bernama last_login yang berisi timestamp terakhir kali pengguna melakukan login.
+  2. menambah lastlogin pada context variable di show_main
+  3. mengubah fungsi logout agar menghapus cookie setelah logout
+  4. menambah info lastlogin di main html
+  
+</details>
+
+
+
+</details>
 
 
