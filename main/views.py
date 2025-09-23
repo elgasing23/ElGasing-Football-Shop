@@ -34,7 +34,7 @@ def create_items(request):
     form = ItemForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
-        form_entry = form.save(commit=false)
+        form_entry = form.save(commit = False)
         form_entry.user = request.user
         form_entry.save()
         return redirect('main:show_main')

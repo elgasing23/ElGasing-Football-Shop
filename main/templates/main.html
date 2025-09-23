@@ -39,7 +39,7 @@
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
   {% for item in item_list %}
   <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; background: #fafafa;">
-    <h2><a href="{% url 'main:show_items' item.id %}">{{ item.title }}</a></h2>
+    <h2><a href="{% url 'main:show_items' item.id %}">{{ item.name }}</a></h2>
 
     <p><b>{{ item.get_category_display }}</b>{% if item.is_featured %} | 
       <b>Featured</b>{% endif %}{% if item.is_items_hot %} | 
