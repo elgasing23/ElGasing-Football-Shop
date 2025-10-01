@@ -33,3 +33,14 @@ class Item(models.Model):
     def increment_views(self):
         self.items_views += 1
         self.save()
+        
+    
+class Seller(models.Model):
+    name = models.CharField(max_length=255) 
+    tanggal_lahir = models.IntegerField()
+    email = models.EmailField()
+    telp = models.IntegerField()
+    sosmed = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    
+
