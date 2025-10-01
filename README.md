@@ -242,10 +242,10 @@ Parameter commit=False pada potongan kode di atas digunakan agar Django tidak la
          <summary>Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!</summary>
          Urutan prioritas menentukan style mana yang akan diterapkan jika ada beberapa CSS yang menargetkan elemen yang sama. urutannya sebagai berikut:
          1. Inline style (<div style="color: red;">)
-            2. ID selector (#id)
-            3. Class, pseudo-class, attribute selector (.class, :hover, [type="text"]) 
-            4. Element selector (div, p, h1)
-            5. Universal selector (*)
+         2. ID selector (#id)
+         3. Class, pseudo-class, attribute selector (.class, :hover, [type="text"]) 
+         4. Element selector (div, p, h1)
+         5. Universal selector (*)
       </details>
       <details>
       <summary> Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!</summary>
