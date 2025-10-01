@@ -249,17 +249,35 @@ Parameter commit=False pada potongan kode di atas digunakan agar Django tidak la
       </details>
       <details>
       <summary> Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!</summary>
+         ada banyak alasan kenapa responsive design menjadi konsep penting namun menurut saya alasan utamanya adalah untuk user experience yang baik dan juga responsive design mendukung tampilan untuk segala jenis device tanpa harus membuat versi yang berbeda. 
+         contoh yang sudah menerapkan dan belum:
+         sudah: instagram, tokopedia
+         belum: pacil web service         
       </details>
       <details>
       <summary> Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!</summary>
+         Margin adalah jarak luar elemen ke elemen lain sedangkan border adalah garis di sekitar elemen sedangkan padding adalah jarak dalam antara konten elemen dengan border
+         contoh implementasi:
+         div {
+           margin: 20px;   /* jarak luar 20px */
+           padding: 10px;  /* jarak dalam 10px */
+           border: 2px solid black; /* garis hitam 2px */
+         }
       </details>
       <details>
       <summary> Jelaskan konsep flex box dan grid layout beserta kegunaannya!</summary>
+      Flexbox dan Grid adalah layout modern CSS untuk mengatur posisi elemen. bedanya flexbox untuk satu dimensi(baris/kolom) sedangkan  grid untuk dua dimensi
       </details>
    </details>
 
    <details>
       <summary>Penjelasan Step by Step</summary>
+      1. implementasi fungsi untuk menghapus dan mengedit product
+      pertama kita buat dulu functionnya di views.py lalu setelah itu kita tambahkan pathnya di urls.py setelah itu kita buat button buat edit and delete
+      2. kustomisasi desain template HTML 
+      sebenarnya bagian ini saya bingung mau jelasin gimana tapi intinya yang pertama itu saya setting dulu agar tailwind dapat digunakan dan juga membuat static global css untuk style yang digunakan berulang kali (jadi otomatis ke set stylenya tidak perlu menambah style lagi) setelah itu sebenarnya kurang lebih sama kayak tutorial paling pemilihan warna saja yang berbeda saya menggunakan warna biru saya juga membuat sedikit perubahan di bagian card karna tidak boleh persis sama, pada cardnya saya mengganti readmore jadi view details lalu informasi views saya ganti jadi informasi penjual setelah itu saya sedikit menambahkan efek hover.
+      3. navigation bar
+      ini juga kurang lebih sama paling beda warna dan juga untuk info user dan juga logout saya menggunakan logo user yang bisa drop down
    </details>
 </details>
 
