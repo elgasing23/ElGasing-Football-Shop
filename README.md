@@ -221,7 +221,7 @@ menambah info lastlogin di main html
 
 Urutan prioritas menentukan style mana yang akan diterapkan jika ada beberapa CSS yang menargetkan elemen yang sama. urutannya sebagai berikut:
 
-Inline style (<div style="color: red;">)
+Inline style (<divstyle="color: red;">)
 
 ID selector (#id)
 
