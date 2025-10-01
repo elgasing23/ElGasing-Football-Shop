@@ -229,8 +229,47 @@ Parameter commit=False pada potongan kode di atas digunakan agar Django tidak la
   
 </details>
 
+   
+   
 
+</details>
 
+<details>
+   <summary>Tugas 5: Desain Web menggunakan HTML, CSS dan Framework CSS</summary>
+   <details>
+      <summary>Jawaban Pertanyaan</summary>
+      <details>
+         <summary>Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!</summary>
+         Urutan prioritas menentukan style mana yang akan diterapkan jika ada beberapa CSS yang menargetkan elemen yang sama. urutannya sebagai berikut:
+         1. Inline style (<div style="color: red;">)
+         2. ID selector (#id)
+         3. Class, pseudo-class, attribute selector (.class, :hover, [type="text"]) 
+         4. Element selector (div, p, h1)
+         5. Universal selector (*)
+      </details>
+      <details>
+         
+      <summary> Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!</summary>
+      
+      </details>
+
+      <details>
+         
+      <summary> Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!</summary>
+      
+      </details>
+
+      <details>
+         
+      <summary> Jelaskan konsep flex box dan grid layout beserta kegunaannya!</summary>
+      
+      </details>
+
+   </details>
+
+   <details>
+      <summary>Penjelasan Step by Step</summary>
+   </details>
 </details>
 
 
