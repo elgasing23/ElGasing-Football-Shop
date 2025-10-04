@@ -4,11 +4,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% block meta %} {% endblock meta %}
+    <meta name="theme-color" content="#da291c" />
+    {% block meta %}{% endblock meta %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" />
   </head>
-  <body>
-    {% block content %} {% endblock content %}
+  <body class="mu-body">
+    <div class="mu-background">
+      <div class="mu-gradient"></div>
+      <div class="mu-stripe mu-stripe--left"></div>
+      <div class="mu-stripe mu-stripe--right"></div>
+      <div class="mu-pulse mu-pulse--one"></div>
+      <div class="mu-pulse mu-pulse--two"></div>
+    </div>
+
+    <div class="mu-page">
+      <main class="mu-page-content">
+        {% block content %}{% endblock content %}
+      </main>
+      <footer class="mu-footer">
+        Glory Glory Man United • Crafted for Red Devils Fans
+      </footer>
+    </div>
+
+    <script>
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.25,
+          rootMargin: '0px 0px -10% 0px',
+        },
+      );
+
+      document.querySelectorAll('.mu-reveal').forEach((element) => {
+        revealObserver.observe(element);
+      });
+
+      const floatingBadges = document.querySelectorAll('[data-mu-float]');
+      let frame = 0;
+      const animate = () => {
+        floatingBadges.forEach((badge, index) => {
+          const amplitude = parseFloat(badge.dataset.muFloat) || 6;
+          const speed = 0.015 * (index + 1);
+          const offsetX = Math.sin(frame * speed) * amplitude;
+          const offsetY = Math.cos(frame * speed) * amplitude * 0.6;
+          badge.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0)`;
+        });
+        frame += 1;
+        requestAnimationFrame(animate);
+      };
+      if (floatingBadges.length) {
+        animate();
+      }
+    </script>
   </body>
 </html>

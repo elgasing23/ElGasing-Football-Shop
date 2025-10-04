@@ -2,53 +2,94 @@
 {% load static %}
 
 {% block meta %}
-<title>Items</title>
+<title>Elgasing United Shop</title>
 {% endblock meta %}
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="bg-gray-50 w-full pt-16 min-h-screen">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Available Items</h1>
-      <p class="text-gray-600">Browse and manage your sports items</p>
-    </div>
-
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
-      <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-blue-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white">
-          All Items
-        </a>
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-blue-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white">
-          My Items
-        </a>
+<div class="mu-container space-y-16">
+  <section class="mu-hero mu-reveal">
+    <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-10 items-center">
+      <div class="space-y-8">
+        <div class="inline-flex items-center gap-3 bg-black/35 border border-yellow-400/30 rounded-full px-4 py-2 text-xs tracking-[0.35em] uppercase text-yellow-300" data-mu-float="5">
+          <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+          Matchday Mode On
+        </div>
+        <h1 class="mu-hero__title">Bring Old Trafford Energy Into Your Locker Room</h1>
+        <p class="mu-hero__subtitle">
+          Koleksi perlengkapan terbaik bertema Manchester United, dari jersey hingga aksesoris, lengkap dengan pengalaman interaktif penuh energi Red Devils.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="{% url 'main:create_items' %}" class="mu-button">Tambah Item</a>
+          <a href="#item-grid" class="mu-button mu-button--ghost">Lihat Katalog</a>
+        </div>
+        <div class="mu-chip-row">
+          <span class="mu-chip" data-mu-float="3">Theatre Of Dreams</span>
+          <span class="mu-chip" data-mu-float="4">Red Devils Spirit</span>
+          <span class="mu-chip" data-mu-float="5">Match Ready</span>
+        </div>
       </div>
-      {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">
-          Last login: {{ last_login }}
+      <div class="relative hidden lg:block">
+        <div class="absolute -top-8 -right-6 w-32 h-32 rounded-full bg-yellow-400/20 blur-2xl"></div>
+        <div class="absolute -bottom-6 -left-8 w-48 h-48 rounded-full bg-red-600/30 blur-3xl"></div>
+        <div class="relative bg-black/40 border border-yellow-400/30 rounded-[32px] p-8 backdrop-blur-xl space-y-6">
+          <p class="text-yellow-300 uppercase tracking-[0.4em] text-xs">Match Stats</p>
+          <div class="mu-info-panel">
+            <div class="mu-info-box">
+              <span class="mu-info-box__label">Total Items</span>
+              <span class="mu-info-box__value">{{ item_list|length }}</span>
+            </div>
+            <div class="mu-info-box">
+              <span class="mu-info-box__label">Your Collection</span>
+              <span class="mu-info-box__value">{{ request.user.item_set.count }}</span>
+            </div>
+            <div class="mu-info-box">
+              <span class="mu-info-box__label">Last Login</span>
+              <span class="mu-info-box__value text-base tracking-[0.18em]">{{ last_login }}</span>
+            </div>
+          </div>
+          <p class="text-sm text-white/60 leading-relaxed">Tingkatkan koleksi kamu dan jadi bagian dari semangat juang Manchester United.</p>
         </div>
-      {% endif %}
+      </div>
     </div>
+  </section>
 
-    {% if not item_list %}
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'image/no-items.png' %}" alt="No items available" class="w-full h-full object-contain">
+  <section class="mu-section mu-reveal">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+      <div class="relative inline-flex">
+        {% with active_filter=request.GET.filter %}
+        <div class="mu-toggle-group relative" data-active="{% if active_filter == 'my' %}my{% else %}all{% endif %}">
+          <div class="mu-toggle-group__indicator"></div>
+          <a href="?" class="mu-toggle {% if active_filter != 'my' %}is-active{% endif %}">Semua Item</a>
+          <a href="?filter=my" class="mu-toggle {% if active_filter == 'my' %}is-active{% endif %}">Koleksi Saya</a>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No items found</h3>
-        <p class="text-gray-500 mb-6">Be the first to add an item to the marketplace.</p>
-        <a href="{% url 'main:create_items' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-          Create Item
-        </a>
+        {% endwith %}
+      </div>
+      <div class="flex flex-wrap gap-4 text-xs uppercase tracking-[0.35em] text-white/60">
+        <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> Exclusive Drop</span>
+        <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-500"></span> Featured Gear</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="item-grid" class="mu-section mu-reveal">
+    {% if not item_list %}
+      <div class="mu-empty">
+        <div class="mu-empty__icon">⚽</div>
+        <h3 class="text-2xl font-bold uppercase tracking-[0.2em] text-yellow-400 mb-4">Belum Ada Item</h3>
+        <p class="text-white/70 mb-8 max-w-2xl mx-auto">Tambahkan gear pertama kamu dan buat etalase Manchester United versimu sendiri.</p>
+        <a href="{% url 'main:create_items' %}" class="mu-button">Buat Item Sekarang</a>
       </div>
     {% else %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {% for item in item_list %}
-          {% include 'card_item.html' with item=item %}
+          <div class="mu-reveal">
+            {% include 'card_item.html' with item=item %}
+          </div>
         {% endfor %}
       </div>
     {% endif %}
-  </div>
+  </section>
 </div>
 {% endblock content %}
