@@ -66,5 +66,12 @@
 .form-style input[type="checkbox"]:focus {
     outline: none;
     border-color: #1D4ED8;
-    box-shadow: none; 
+    box-shadow: none;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }

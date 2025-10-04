@@ -39,9 +39,9 @@
         </div>
       {% endif %}
 
-      <form method="POST" action="" class="space-y-5">
+      <form id="register-form" method="POST" action="" class="space-y-5">
         {% csrf_token %}
-        
+
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
           <input 
@@ -75,12 +75,14 @@
             placeholder="Confirm your password">
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           class="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200">
           Create Account
         </button>
       </form>
+
+      <div id="register-error" class="hidden mt-4 px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700"></div>
 
       {% if messages %}
         <div class="mt-6">
@@ -114,4 +116,87 @@
     </div>
   </div>
 </div>
+
+<div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-[60] flex flex-col items-center gap-3"></div>
+
+<script>
+  const registerForm = document.getElementById('register-form');
+  const errorBox = document.getElementById('register-error');
+  const submitButton = registerForm.querySelector('button[type="submit"]');
+
+  function getCsrfToken() {
+    const match = document.cookie.match(/csrftoken=([^;]+)/);
+    return match ? match[1] : '';
+  }
+
+  async function parseJsonResponse(response) {
+    const contentType = response.headers.get('Content-Type') || '';
+    if (contentType.includes('application/json')) {
+      return response.json();
+    }
+    const text = await response.text();
+    throw new Error(text || 'Unexpected server response.');
+  }
+
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `flex items-center gap-2 px-4 py-3 rounded-lg shadow-md border text-sm bg-white transition-all duration-500 ease-in-out opacity-0 -translate-y-2 ${type === 'success' ? 'border-green-200 text-green-700' : type === 'error' ? 'border-red-200 text-red-700' : 'border-slate-200 text-slate-700'}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.remove('opacity-0', '-translate-y-2');
+    });
+
+    setTimeout(() => {
+      toast.classList.add('opacity-0', '-translate-y-2');
+      setTimeout(() => toast.remove(), 500);
+    }, 2500);
+  }
+
+  registerForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    errorBox.classList.add('hidden');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating Account...';
+
+    const payload = {
+      username: registerForm.username.value,
+      password1: registerForm.password1.value,
+      password2: registerForm.password2.value,
+    };
+
+    try {
+      const response = await fetch('{% url "main:register" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await parseJsonResponse(response);
+
+      if (!response.ok) {
+        const errorText = data.errors ? Object.values(data.errors).flat().join(', ') : (data.message || 'Registration failed');
+        throw new Error(errorText);
+      }
+
+      showToast('Account created successfully. Redirecting to login...', 'success');
+      setTimeout(() => {
+        window.location.href = data.redirect_url || '{% url "main:login" %}';
+      }, 1000);
+    } catch (error) {
+      errorBox.textContent = error.message;
+      errorBox.classList.remove('hidden');
+      showToast(error.message, 'error');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Create Account';
+    }
+  });
+</script>
 {% endblock content %}
