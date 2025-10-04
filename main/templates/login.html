@@ -13,87 +13,44 @@
         <p class="text-gray-600">Welcome back to ELGASING</p>
       </div>
 
-      <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div id="login-feedback" class="hidden mb-6"></div>
 
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-6">
-        {% csrf_token %}
-        
+      <form id="login-form" class="space-y-6">
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-          <input 
-            id="username" 
-            name="username" 
-            type="text" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 transition-colors" 
+          <input
+            id="username"
+            name="username"
+            type="text"
+            required
+            autocomplete="username"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
             placeholder="Enter your username">
         </div>
 
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <input 
-            id="password" 
-            name="password" 
-            type="password" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 transition-colors" 
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
             placeholder="Enter your password">
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
+          id="login-submit"
           class="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-md hover:bg-blue-700 transition-colors">
           Sign In
         </button>
       </form>
 
-      <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded-md text-sm border
-                {% if message.tags == 'success' %}
-                  bg-blue-50 border-blue-200 text-blue-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
       <div class="mt-6 text-center pt-6 border-t border-gray-200">
         <p class="text-gray-500 text-sm">
-          Don't have an account? 
+          Don't have an account?
           <a href="{% url 'main:register' %}" class="text-blue-600 hover:text-blue-700 font-medium">
             Register Now
           </a>
@@ -102,4 +59,74 @@
     </div>
   </div>
 </div>
+
+<script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('login-form');
+    const feedback = document.getElementById('login-feedback');
+    const submitButton = document.getElementById('login-submit');
+
+    function showFeedback(type, messages) {
+      if (!messages || !messages.length) {
+        feedback.classList.add('hidden');
+        feedback.innerHTML = '';
+        return;
+      }
+
+      const styles = type === 'success'
+        ? 'bg-green-50 border border-green-200 text-green-700'
+        : 'bg-red-50 border border-red-200 text-red-700';
+
+      feedback.className = `mb-6 px-4 py-3 rounded-md text-sm ${styles}`;
+      feedback.innerHTML = messages.map(message => `<p>${message}</p>`).join('');
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      submitButton.disabled = true;
+      submitButton.textContent = 'Signing in...';
+      showFeedback(null, []);
+
+      const payload = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const response = await fetch("{% url 'main:login' %}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          const errors = data.errors ? Object.values(data.errors).flat() : ['Unable to sign in.'];
+          showFeedback('error', errors);
+          submitButton.disabled = false;
+          submitButton.textContent = 'Sign In';
+          return;
+        }
+
+        showFeedback('success', ['Login successful. Redirecting...']);
+        window.location.href = data.redirect_url || '/';
+      } catch (error) {
+        showFeedback('error', [error.message || 'Unable to sign in.']);
+        submitButton.disabled = false;
+        submitButton.textContent = 'Sign In';
+      }
+    });
+  });
+</script>
 {% endblock content %}

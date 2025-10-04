@@ -10,45 +10,401 @@
 <div class="bg-gray-50 w-full pt-16 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Available Items</h1>
-      <p class="text-gray-600">Browse and manage your sports items</p>
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Available Items</h1>
+        <p class="text-gray-600">Browse and manage your sports items</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="flex items-center bg-white border border-gray-200 rounded-lg p-2">
+          <button data-filter="all" class="filter-button px-4 py-2 rounded-md font-medium transition-colors text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500">
+            All Items
+          </button>
+          <button data-filter="my" class="filter-button px-4 py-2 rounded-md font-medium transition-colors text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500">
+            My Items
+          </button>
+        </div>
+
+        <button id="open-create" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors shadow-sm">
+          + Create Item
+        </button>
+
+        {% if user.is_authenticated %}
+          <div class="text-sm text-gray-500 text-right">
+            <p class="font-medium">Last login</p>
+            <p>{{ last_login }}</p>
+          </div>
+        {% endif %}
+      </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
-      <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-blue-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white">
-          All Items
-        </a>
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-blue-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white">
-          My Items
-        </a>
+    <div id="feedback" class="hidden mb-6"></div>
+
+    <div id="empty-state" class="hidden bg-white rounded-lg border border-gray-200 p-12 text-center">
+      <div class="w-32 h-32 mx-auto mb-4">
+        <img src="{% static 'image/no-items.png' %}" alt="No items available" class="w-full h-full object-contain">
       </div>
-      {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">
-          Last login: {{ last_login }}
-        </div>
-      {% endif %}
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No items found</h3>
+      <p class="text-gray-500 mb-6">Be the first to add an item to the marketplace.</p>
+      <button id="empty-state-create" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+        Create Item
+      </button>
     </div>
 
-    {% if not item_list %}
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'image/no-items.png' %}" alt="No items available" class="w-full h-full object-contain">
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No items found</h3>
-        <p class="text-gray-500 mb-6">Be the first to add an item to the marketplace.</p>
-        <a href="{% url 'main:create_items' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-          Create Item
-        </a>
-      </div>
-    {% else %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for item in item_list %}
-          {% include 'card_item.html' with item=item %}
-        {% endfor %}
-      </div>
-    {% endif %}
+    <div id="items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 </div>
+
+<div id="item-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative">
+    <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
+      <span class="sr-only">Close</span>
+      ✕
+    </button>
+    <h2 id="modal-title" class="text-2xl font-semibold text-gray-900 mb-4">Create Item</h2>
+
+    <div id="form-errors" class="hidden mb-4"></div>
+
+    <form id="item-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input type="hidden" id="item-id">
+
+      <div class="md:col-span-2">
+        <label for="item-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <input type="text" id="item-name" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" placeholder="Enter item name">
+      </div>
+
+      <div>
+        <label for="item-price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+        <input type="number" id="item-price" name="price" min="0" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" placeholder="100000">
+      </div>
+
+      <div>
+        <label for="item-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select id="item-category" name="category" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+          <option value="ball">Ball</option>
+          <option value="shoes">Shoes</option>
+          <option value="shocks">Shocks</option>
+          <option value="jersey">Jersey</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-2">
+        <label for="item-thumbnail" class="block text-sm font-medium text-gray-700 mb-1">Thumbnail URL</label>
+        <input type="url" id="item-thumbnail" name="thumbnail" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" placeholder="https://example.com/image.jpg">
+      </div>
+
+      <div class="md:col-span-2">
+        <label for="item-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <textarea id="item-description" name="description" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" placeholder="Describe the item"></textarea>
+      </div>
+
+      <div class="md:col-span-2 flex items-center gap-2">
+        <input type="checkbox" id="item-featured" name="is_featured" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+        <label for="item-featured" class="text-sm text-gray-700">Mark as featured item</label>
+      </div>
+
+      <div class="md:col-span-2 flex justify-end gap-3 mt-2">
+        <button type="button" id="cancel-modal" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">Cancel</button>
+        <button type="submit" id="submit-item" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Save Item</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  const listUrl = "{% url 'main:items_list_ajax' %}";
+  const createUrl = "{% url 'main:create_items' %}";
+  const editUrlTemplate = "{% url 'main:edit_item' '00000000-0000-0000-0000-000000000000' %}";
+  const deleteUrlTemplate = "{% url 'main:delete_item' '00000000-0000-0000-0000-000000000000' %}";
+  const detailUrlTemplate = "{% url 'main:show_items' '00000000-0000-0000-0000-000000000000' %}";
+
+  const filterButtons = document.querySelectorAll('.filter-button');
+  const itemsContainer = document.getElementById('items-container');
+  const emptyState = document.getElementById('empty-state');
+  const feedback = document.getElementById('feedback');
+  const itemModal = document.getElementById('item-modal');
+  const itemForm = document.getElementById('item-form');
+  const itemIdInput = document.getElementById('item-id');
+  const modalTitle = document.getElementById('modal-title');
+  const formErrors = document.getElementById('form-errors');
+  const submitButton = document.getElementById('submit-item');
+  const openCreateButtons = [document.getElementById('open-create'), document.getElementById('empty-state-create')].filter(Boolean);
+  let currentFilter = 'all';
+  const itemCache = new Map();
+
+  function buildUrl(template, id) {
+    return template.replace('00000000-0000-0000-0000-000000000000', id);
+  }
+
+  function setFilterActive(filter) {
+    filterButtons.forEach(button => {
+      const isActive = button.dataset.filter === filter;
+      button.classList.toggle('bg-blue-600', isActive);
+      button.classList.toggle('text-white', isActive);
+      button.classList.toggle('text-gray-700', !isActive);
+      button.classList.toggle('border', !isActive);
+      button.classList.toggle('border-gray-300', !isActive);
+    });
+  }
+
+  function resetForm() {
+    itemForm.reset();
+    itemIdInput.value = '';
+    formErrors.classList.add('hidden');
+    formErrors.innerHTML = '';
+  }
+
+  function closeModal() {
+    itemModal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    submitButton.disabled = false;
+    submitButton.textContent = 'Save Item';
+    resetForm();
+  }
+
+  function openModal(mode, item = null) {
+    showFormErrors(null);
+    modalTitle.textContent = mode === 'edit' ? 'Edit Item' : 'Create Item';
+    submitButton.textContent = mode === 'edit' ? 'Update Item' : 'Save Item';
+    itemModal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+
+    if (item) {
+      itemIdInput.value = item.id;
+      document.getElementById('item-name').value = item.name;
+      document.getElementById('item-price').value = item.price;
+      document.getElementById('item-description').value = item.description;
+      document.getElementById('item-thumbnail').value = item.thumbnail || '';
+      document.getElementById('item-category').value = item.category;
+      document.getElementById('item-featured').checked = item.is_featured;
+    }
+
+    if (!item) {
+      resetForm();
+    }
+
+    itemModal.dataset.mode = mode;
+  }
+
+  window.openItemModal = () => openModal('create');
+
+  function displayFeedback(type, message) {
+    if (!message) {
+      feedback.classList.add('hidden');
+      feedback.innerHTML = '';
+      return;
+    }
+
+    const styles = {
+      success: 'bg-green-50 border border-green-200 text-green-700',
+      error: 'bg-red-50 border border-red-200 text-red-700'
+    };
+
+    feedback.className = `mb-6 px-4 py-3 rounded-md text-sm ${styles[type] || ''}`;
+    feedback.textContent = message;
+  }
+
+  function showFormErrors(errors) {
+    if (!errors) {
+      formErrors.classList.add('hidden');
+      formErrors.innerHTML = '';
+      return;
+    }
+
+    formErrors.className = 'mb-4 px-4 py-3 rounded-md text-sm bg-red-50 border border-red-200 text-red-700';
+    formErrors.innerHTML = Object.entries(errors).map(([field, messages]) => {
+      const friendlyName = field === '__all__' ? 'Error' : field.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase());
+      const list = Array.isArray(messages) ? messages : [messages];
+      return `<p><strong>${friendlyName}:</strong> ${list.join(', ')}</p>`;
+    }).join('');
+  }
+
+  async function loadItems(filter = 'all') {
+    try {
+      const response = await fetch(`${listUrl}?filter=${filter}`, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to load items.');
+      }
+      const data = await response.json();
+      renderItems(data.items || []);
+    } catch (error) {
+      displayFeedback('error', error.message);
+    }
+  }
+
+  function renderItems(items) {
+    itemsContainer.innerHTML = '';
+    itemCache.clear();
+    if (!items.length) {
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+
+    items.forEach(item => {
+      itemCache.set(item.id, item);
+      const card = document.createElement('article');
+      card.className = 'bg-white/80 backdrop-blur-md rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 overflow-hidden min-h-[400px] flex flex-col';
+      const detailUrl = buildUrl(detailUrlTemplate, item.id);
+      const deleteUrl = buildUrl(deleteUrlTemplate, item.id);
+
+      card.innerHTML = `
+        <div class="aspect-[16/9] relative overflow-hidden rounded-t-2xl">
+          ${item.thumbnail ? `<img src="${item.thumbnail}" alt="${item.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">` : `<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm">No Image</div>`}
+          <div class="absolute top-4 left-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-600 text-white shadow-md">${item.category_display}</span>
+          </div>
+          ${item.is_featured ? `<div class="absolute top-4 right-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-200 text-yellow-900 shadow-md">Featured</span></div>` : ''}
+        </div>
+        <div class="p-6 flex flex-col justify-between flex-1">
+          <div>
+            <div class="flex items-center text-sm text-gray-500 mb-3 space-x-2">
+              <span class="font-medium text-gray-700">Rp ${item.price.toLocaleString('id-ID')}</span>
+              <span>•</span>
+              <span>${item.owner || 'Unknown'}</span>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-snug">
+              <a href="${detailUrl}" class="hover:text-blue-600 transition-colors">${item.name}</a>
+            </h3>
+            <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">${item.description}</p>
+          </div>
+          <div class="pt-4 border-t border-gray-200 flex justify-between items-center">
+            <a href="${detailUrl}" class="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors">View details →</a>
+            ${item.is_owner ? `
+              <div class="flex space-x-3">
+                <button class="text-gray-500 hover:text-gray-800 text-sm transition-colors edit-button" data-id="${item.id}">Edit</button>
+                <button class="text-red-500 hover:text-red-700 text-sm transition-colors delete-button" data-url="${deleteUrl}">Delete</button>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+
+      itemsContainer.appendChild(card);
+    });
+
+    itemsContainer.querySelectorAll('.edit-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = itemCache.get(button.dataset.id);
+        if (item) {
+          openModal('edit', item);
+        }
+      });
+    });
+
+    itemsContainer.querySelectorAll('.delete-button').forEach(button => {
+      button.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to delete this item?')) {
+          return;
+        }
+        try {
+          const response = await fetch(button.dataset.url, {
+            method: 'DELETE',
+            headers: {
+              'X-CSRFToken': getCookie('csrftoken'),
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+          const data = await response.json();
+          if (!response.ok || !data.success) {
+            throw new Error(data.errors ? Object.values(data.errors).flat().join(', ') : 'Failed to delete item.');
+          }
+          displayFeedback('success', 'Item deleted successfully.');
+          loadItems(currentFilter);
+        } catch (error) {
+          displayFeedback('error', error.message);
+        }
+      });
+    });
+  }
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const selectedFilter = button.dataset.filter;
+      currentFilter = selectedFilter;
+      setFilterActive(selectedFilter);
+      loadItems(selectedFilter);
+    });
+  });
+
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+  document.getElementById('cancel-modal').addEventListener('click', closeModal);
+  itemModal.addEventListener('click', (event) => {
+    if (event.target === itemModal) {
+      closeModal();
+    }
+  });
+
+  openCreateButtons.forEach(button => button.addEventListener('click', () => openModal('create')));
+
+  itemForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    submitButton.disabled = true;
+    submitButton.textContent = 'Saving...';
+
+    const mode = itemModal.dataset.mode || 'create';
+    const payload = {
+      name: document.getElementById('item-name').value,
+      price: document.getElementById('item-price').value,
+      description: document.getElementById('item-description').value,
+      thumbnail: document.getElementById('item-thumbnail').value,
+      category: document.getElementById('item-category').value,
+      is_featured: document.getElementById('item-featured').checked ? 'on' : '',
+    };
+
+    let url = createUrl;
+    let method = 'POST';
+
+    if (mode === 'edit' && itemIdInput.value) {
+      url = buildUrl(editUrlTemplate, itemIdInput.value);
+      method = 'PUT';
+    }
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken'),
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        showFormErrors(data.errors || { '__all__': ['Failed to save item.'] });
+        submitButton.disabled = false;
+        submitButton.textContent = mode === 'edit' ? 'Update Item' : 'Save Item';
+        return;
+      }
+
+      displayFeedback('success', mode === 'edit' ? 'Item updated successfully.' : 'Item created successfully.');
+      closeModal();
+      loadItems(currentFilter);
+    } catch (error) {
+      showFormErrors({ '__all__': [error.message || 'Failed to save item.'] });
+      submitButton.disabled = false;
+      submitButton.textContent = mode === 'edit' ? 'Update Item' : 'Save Item';
+    }
+  });
+
+  setFilterActive(currentFilter);
+  loadItems(currentFilter);
+</script>
 {% endblock content %}
