@@ -277,3 +277,33 @@ ini juga kurang lebih sama paling beda warna dan juga untuk info user dan juga l
 
 </details> 
 </details>
+<details>
+<summary>Tugas 6: Javascript dan AJAX</summary>
+### 1. Apa perbedaan antara synchronous request dan asynchronous request?
+- **Synchronous request**: Browser akan menunggu server merespons sebelum melanjutkan eksekusi kode berikutnya. Akibatnya, halaman bisa terasa “freeze” jika request lama.  
+- **Asynchronous request**: Browser tidak perlu menunggu respon selesai. Request dijalankan di background, sehingga user tetap bisa berinteraksi dengan halaman tanpa terganggu.  
+
+### 2. Bagaimana AJAX bekerja di Django (alur request–response)?
+1. User melakukan aksi di browser (misalnya klik tombol).  
+2. JavaScript mengirim request AJAX ke server Django (biasanya via `fetch()` atau `XMLHttpRequest`).  
+3. Django menerima request, memproses data (misalnya query database), lalu mengembalikan response (JSON/HTML).  
+4. JavaScript menerima response dan memperbarui DOM tanpa reload halaman.  
+
+### 3. Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+- **Tanpa reload**: Halaman tidak harus dimuat ulang setiap kali ada data baru.  
+- **User experience lebih baik**: Interaksi terasa cepat dan dinamis.  
+- **Efisiensi bandwidth**: Hanya data yang diperlukan yang dikirim, bukan seluruh halaman.  
+- **Interaktif**: Bisa menampilkan notifikasi/toast, update tabel/card secara real-time.  
+
+### 4. Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+- Gunakan **CSRF token** di setiap request AJAX agar aman dari CSRF attack.  
+- Pastikan data sensitif (password, email) selalu dikirim melalui HTTPS.  
+- Validasi data di server-side, jangan hanya di client-side.  
+- Batasi response agar tidak membocorkan informasi internal (contoh: jangan kirim stack trace).  
+
+### 5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+- Membuat aplikasi terasa lebih cepat dan responsif.  
+- Mengurangi waktu tunggu karena data bisa diupdate sebagian, bukan seluruh halaman.  
+- Memberikan pengalaman seperti aplikasi desktop/mobile (SPA-like).  
+- Contoh nyata: form login yang menampilkan error tanpa reload, atau tabel item yang langsung terupdate setelah user menambah data.  
+</details>
