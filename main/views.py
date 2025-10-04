@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from django.template.loader import render_to_string
 
 
 def serialize_item(item: Item) -> dict:
@@ -88,7 +89,12 @@ def items_collection(request):
         queryset = queryset.filter(is_featured=True)
 
     data = [serialize_item(item) for item in queryset]
-    return JsonResponse({"success": True, "data": data})
+    html = "".join(
+        render_to_string("card_item.html", {"item": item}, request=request)
+        for item in queryset
+    )
+
+    return JsonResponse({"success": True, "data": data, "html": html})
 
 
 @login_required(login_url="/login")

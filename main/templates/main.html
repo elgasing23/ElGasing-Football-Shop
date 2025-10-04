@@ -74,21 +74,7 @@
           <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" id="empty-create">Create Item</button>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-left text-sm">
-            <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-              <tr>
-                <th class="px-4 py-3">Name</th>
-                <th class="px-4 py-3">Category</th>
-                <th class="px-4 py-3">Price</th>
-                <th class="px-4 py-3">Views</th>
-                <th class="px-4 py-3">Featured</th>
-                <th class="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="items-table" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
+        <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
       </div>
     </section>
   </div>
@@ -177,7 +163,7 @@
   const loadingState = document.getElementById('loading-state');
   const errorState = document.getElementById('error-state');
   const emptyState = document.getElementById('empty-state');
-  const itemsTable = document.getElementById('items-table');
+  const itemsContainer = document.getElementById('items-container');
   const toastContainer = document.getElementById('toast-container');
 
   const itemModal = document.getElementById('item-modal');
@@ -197,6 +183,7 @@
   let currentFilter = 'all';
   let editItemId = null;
   let deleteItemId = null;
+  const itemsCache = new Map();
 
   async function parseJsonResponse(response) {
     const contentType = response.headers.get('Content-Type') || '';
@@ -240,7 +227,7 @@
     loadingState.classList.remove('hidden');
     errorState.classList.add('hidden');
     emptyState.classList.add('hidden');
-    itemsTable.innerHTML = '';
+    itemsContainer.innerHTML = '';
 
     try {
       const response = await fetch(`${endpoints.list}?filter=${currentFilter}`, {
@@ -252,7 +239,7 @@
       }
 
       const data = await parseJsonResponse(response);
-      renderItems(data.data || []);
+      renderItems(data);
     } catch (error) {
       console.error(error);
       errorState.classList.remove('hidden');
@@ -261,7 +248,13 @@
     }
   }
 
-  function renderItems(items) {
+  function renderItems(payload) {
+    const items = payload.data || [];
+    const html = payload.html || '';
+
+    itemsCache.clear();
+    items.forEach((item) => itemsCache.set(item.id, item));
+
     if (!items.length) {
       emptyState.classList.remove('hidden');
       return;
@@ -269,38 +262,7 @@
 
     emptyState.classList.add('hidden');
 
-    items.forEach((item) => {
-      const row = document.createElement('tr');
-      row.className = 'hover:bg-slate-50 transition';
-      row.dataset.id = item.id;
-      row.dataset.name = item.name;
-      row.dataset.description = item.description || '';
-      row.dataset.category = item.category;
-      row.dataset.price = item.price;
-      row.dataset.thumbnail = item.thumbnail || '';
-      row.dataset.featured = item.is_featured ? 'true' : 'false';
-      row.innerHTML = `
-        <td class="px-4 py-3">
-          <div class="font-medium text-slate-900">${item.name}</div>
-          <p class="text-xs text-slate-500 line-clamp-2">${item.description || 'No description provided.'}</p>
-        </td>
-        <td class="px-4 py-3 capitalize">${item.category}</td>
-        <td class="px-4 py-3">${formatCurrency(item.price)}</td>
-        <td class="px-4 py-3">${item.items_views}</td>
-        <td class="px-4 py-3">
-          <span class="px-2 py-1 rounded-full text-xs font-medium ${item.is_featured ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
-            ${item.is_featured ? 'Featured' : 'Standard'}
-          </span>
-        </td>
-        <td class="px-4 py-3">
-          <div class="flex items-center gap-2">
-            <button class="px-3 py-1 text-sm rounded-md border border-slate-200 hover:bg-slate-100 transition" data-action="edit" data-id="${item.id}">Edit</button>
-            <button class="px-3 py-1 text-sm rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition" data-action="delete" data-id="${item.id}">Delete</button>
-          </div>
-        </td>
-      `;
-      itemsTable.appendChild(row);
-    });
+    itemsContainer.innerHTML = html;
   }
 
   async function fetchStats() {
@@ -449,7 +411,7 @@
     }
   });
 
-  itemsTable.addEventListener('click', (event) => {
+  itemsContainer.addEventListener('click', (event) => {
     const button = event.target.closest('button');
     if (!button) return;
 
@@ -457,18 +419,20 @@
     const id = button.dataset.id;
 
     if (action === 'edit') {
-      const row = button.closest('tr');
       modalTitle.textContent = 'Update Item';
       modalSubtitle.textContent = 'Make changes to your football item.';
       modalSubmit.textContent = 'Update Item';
       editItemId = id;
 
-      nameInput.value = row.dataset.name || '';
-      descriptionInput.value = row.dataset.description || '';
-      categoryInput.value = (row.dataset.category || 'other').toLowerCase();
-      priceInput.value = row.dataset.price || 0;
-      thumbnailInput.value = row.dataset.thumbnail || '';
-      featuredInput.checked = row.dataset.featured === 'true';
+      const item = itemsCache.get(id);
+      if (item) {
+        nameInput.value = item.name || '';
+        descriptionInput.value = item.description || '';
+        categoryInput.value = (item.category || 'other').toLowerCase();
+        priceInput.value = item.price || 0;
+        thumbnailInput.value = item.thumbnail || '';
+        featuredInput.checked = Boolean(item.is_featured);
+      }
 
       toggleModal(itemModal, true);
     }
