@@ -279,6 +279,7 @@ ini juga kurang lebih sama paling beda warna dan juga untuk info user dan juga l
 </details>
 <details>
 <summary>Tugas 6: Javascript dan AJAX</summary>
+   
 ### 1. Apa perbedaan antara synchronous request dan asynchronous request?
 - **Synchronous request**: Browser akan menunggu server merespons sebelum melanjutkan eksekusi kode berikutnya. Akibatnya, halaman bisa terasa “freeze” jika request lama.  
 - **Asynchronous request**: Browser tidak perlu menunggu respon selesai. Request dijalankan di background, sehingga user tetap bisa berinteraksi dengan halaman tanpa terganggu.  
