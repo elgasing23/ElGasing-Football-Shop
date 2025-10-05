@@ -193,18 +193,18 @@ def item_stats(request):
     )
 
 
-def show_xml_by_id(request, news_id):
+def show_xml_by_id(request, items_id):
    try:
-       Item_item = Item.objects.filter(pk=news_id)
+       Item_item = Item.objects.filter(pk=items_id)
        xml_data = serializers.serialize("xml", Item_item)
        return HttpResponse(xml_data, content_type="application/xml")
    except Item.DoesNotExist:
        return HttpResponse(status=404)
    
    
-def show_json_by_id(request, news_id):
+def show_json_by_id(request, items_id):
    try:
-       Item_item = Item.objects.get(pk=news_id)
+       Item_item = Item.objects.get(pk=items_id)
        json_data = serializers.serialize("json", [Item_item])
        return HttpResponse(json_data, content_type="application/json")
    except Item.DoesNotExist:
